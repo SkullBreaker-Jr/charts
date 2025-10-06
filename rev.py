@@ -162,3 +162,27 @@ class ASRNSGRulesHandler:
         except Exception:
             logging.warning("Failed to parse NSG id.", extra={"nsg_id": nsg_id})
             return NsgInfo(nsg_id, None, None)
+
+
+
+
+USing Example 
+
+handler = ASRNSGRulesHandler(
+    manager=nsg_manager,                    # your existing NsgManager (has application_name)
+    operations=nsg_rule_operations,         # your existing NsgRuleOperations
+    azure_service=azure_network_service,    # your AzureNetworkService
+    azure_resource_manager=azure_rm,        # your AzureResourceManager (must map "cus"/"eus2" -> VNet/RG)
+    cus_subnet_name="app-cus-001",          # EXACT subnet name in CUS
+    eus2_subnet_name="app-eus2-001",        # EXACT subnet name in EUS2
+    rsv_pe_ips_by_region={
+        "cus": ["10.5.2.4"],                # CUS RSV Private Endpoint IP(s)
+        "eus2": ["10.8.3.7"]                # EUS2 RSV Private Endpoint IP(s)
+    },
+)
+
+# Create/update rules
+handler.apply(destroy=False)
+
+# Or remove them
+# handler.apply(destroy=True)
